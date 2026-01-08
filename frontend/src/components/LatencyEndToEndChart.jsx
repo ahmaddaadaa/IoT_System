@@ -6,12 +6,13 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
 } from "recharts";
 
-export default function TemperatureChart({ data }) {
+export default function LatencyEndToEndChart({ data }) {
   return (
     <div className="chart-card">
-      <div className="chart-title">Temperature History</div>
+      <div className="chart-title">Latency Breakdown</div>
 
       <div className="chart-body">
         <ResponsiveContainer width="100%" height="100%">
@@ -33,16 +34,20 @@ export default function TemperatureChart({ data }) {
               }
             />
 
-            <YAxis domain={[0, 40]} />
+            <YAxis domain={[0, "auto"]} />
 
             <Tooltip labelFormatter={(v) => new Date(v).toLocaleTimeString()} />
 
+            {/* <Legend /> */}
+
+            <Line dataKey="sourceToBackend" stroke="#22c55e" dot={false} />
+            <Line dataKey="backendToDb" stroke="#f97316" dot={false} />
+            <Line dataKey="dbToClient" stroke="#3b82f6" dot={false} />
             <Line
-              dataKey="temperature"
+              dataKey="endToEnd"
               stroke="#ef4444"
               strokeWidth={2}
               dot={false}
-              isAnimationActive={false}
             />
           </LineChart>
         </ResponsiveContainer>

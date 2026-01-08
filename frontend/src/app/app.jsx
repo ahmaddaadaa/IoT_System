@@ -1,41 +1,23 @@
-import { useRealtimeMeasurements } from "../hooks/useRealtimeMeasurements";
-import { useMeasurementHistory } from "../hooks/useMeasurementHistory";
-import LiveMeasurement from "../components/LiveMeasurement";
+import "../styles/dashboard.css";
 import TemperatureChart from "../components/TemperatureChart";
-
-const WINDOW = 60;
+import LatencyEndToEndChart from "../components/LatencyEndToEndChart";
+import LiveMeasurement from "../components/LiveMeasurement";
+import { useRealtimeMeasurements } from "../hooks/useRealtimeMeasurements";
 
 export default function App() {
-  const latest = useRealtimeMeasurements();
-  const { history, setHistory, loading } = useMeasurementHistory(WINDOW);
-
-  // Append realtime data to history
-  if (latest && history.length) {
-    const lastTime = history[history.length - 1]?.time;
-    const newTime = new Date(latest.timestamp).toLocaleTimeString();
-
-    if (newTime !== lastTime) {
-      const next = [
-        ...history,
-        { time: newTime, temperature: latest.temperature }
-      ].slice(-WINDOW);
-      setHistory(next);
-    }
-  }
+  const { data, latest } = useRealtimeMeasurements();
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "system-ui" }}>
-      <h1>Live Measurement Dashboard</h1>
+    <div className="dashboard">
+      <h1>IoT Latency Dashboard</h1>
+      <p>Session: stage-1 · Radio: SIMULATED</p>
 
-      <section style={{ marginBottom: "2rem" }}>
-        <h2>Current Measurement</h2>
-        <LiveMeasurement data={latest} />
-      </section>
+      <div className="chart-grid">
+        <TemperatureChart data={data} />
+        <LatencyEndToEndChart data={data} />
+      </div>
 
-      <section>
-        <h2>Temperature History (Rolling)</h2>
-        {loading ? <p>Loading history…</p> : <TemperatureChart data={history} />}
-      </section>
+      <LiveMeasurement latest={latest} />
     </div>
   );
 }
